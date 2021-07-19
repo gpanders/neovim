@@ -1337,6 +1337,32 @@ function M.enable(bufnr, client_id)
     client_id
   )
 end
+
+--- Returns true if diagnostics are enabled for the given buffer and client.
+--- @param bufnr (number): Buffer handle, or 0 for current
+--- @param client_id (number): Client ID
+function M.is_enabled(bufnr, client_id)
+  validate { bufnr = {bufnr, 'n'}, client_id = {client_id, 'n', true} }
+
+  bufnr = get_bufnr(bufnr)
+  client_id = get_client_id(client_id)
+
+  local enabled = false
+  vim.lsp.for_each_buffer_client(bufnr, function(client)
+    if enabled then
+      return
+    end
+
+    if client.id == client_id then
+      if not diagnostic_disabled[bufnr][client_id] then
+        enabled = true
+      end
+    end
+  end)
+
+  return enabled
+end
+
 -- }}}
 
 return M
