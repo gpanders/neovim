@@ -433,6 +433,9 @@ get_query_files({lang}, {query_name}, {is_included})
                     {is_included}  Internal parameter, most of the time left
                                    as `nil`
 
+list_directives()                                          *list_directives()*
+                TODO: Documentation
+
 list_predicates()                                          *list_predicates()*
                 TODO: Documentation
 
