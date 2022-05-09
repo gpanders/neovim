@@ -461,6 +461,37 @@ LspSignatureActiveParameter
 ==============================================================================
 EVENTS                                                            *lsp-events*
 
+                                                                 *LspAttached*
+When an LSP client is attached to a buffer. The |autocmd-pattern| is the
+name of the attaching client. Example: >
+
+    vim.api.nvim_create_autocmd("LspAttached", {
+      pattern = "*",
+      callback = function(args)
+        local client = vim.lsp.get_client_by_name(args.match)
+        local bufnr = args.buf
+        if client.server_capabilities.completionProvider then
+          vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
+        end
+        if client.server_capabilities.definitionProvider then
+          vim.bo[bufnr].tagfunc = "v:lua.vim.lsp.tagfunc"
+        end
+      end,
+    })
+<
+                                                                 *LspDetached*
+When an LSP client is detached from a buffer. The |autocmd-pattern| is the
+name of the detaching client. Example: >
+
+    vim.api.nvim_create_autocmd("LspDetached", {
+      pattern = "*",
+      callback = function(args)
+        vim.cmd("setlocal tagfunc< omnifunc<")
+      end,
+    })
+<
+In addition, the following |User| |autocommands| are provided:
+
 LspProgressUpdate                                          *LspProgressUpdate*
    Upon receipt of a progress notification from the server. See
    |vim.lsp.util.get_progress_messages()|.
@@ -718,6 +749,17 @@ get_client_by_id({client_id})                     *vim.lsp.get_client_by_id()*
 
                 Parameters: ~
                     {client_id}  number client id
+
+                Return: ~
+                    |vim.lsp.client| object, or nil
+
+get_client_by_name({client_name})               *vim.lsp.get_client_by_name()*
+                Gets a client by name, or nil if no client exists with the
+                given name. The returned client may not yet be fully
+                initialized.
+
+                Parameters: ~
+                    {client_name}  string Name of the client
 
                 Return: ~
                     |vim.lsp.client| object, or nil

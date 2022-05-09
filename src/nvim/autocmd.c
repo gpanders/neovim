@@ -1727,6 +1727,7 @@ bool apply_autocmds_group(event_T event, char *fname, char *fname_io, bool force
         || event == EVENT_COLORSCHEME || event == EVENT_COLORSCHEMEPRE
         || event == EVENT_DIRCHANGED || event == EVENT_DIRCHANGEDPRE
         || event == EVENT_FILETYPE || event == EVENT_FUNCUNDEFINED
+        || event == EVENT_LSPATTACHED || event == EVENT_LSPDETACHED
         || event == EVENT_MODECHANGED || event == EVENT_OPTIONSET
         || event == EVENT_QUICKFIXCMDPOST || event == EVENT_QUICKFIXCMDPRE
         || event == EVENT_REMOTEREPLY || event == EVENT_SPELLFILEMISSING
