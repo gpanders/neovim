@@ -1249,6 +1249,13 @@ return {
       defaults={if_true=false}
     },
     {
+      full_name='insertmode', abbreviation='im',
+      short_desc=N_("start the edit of a file in Insert mode"),
+      type='bool', scope={'global'},
+      varname='p_force_off',
+      defaults={if_true=false}
+    },
+    {
       full_name='isfname', abbreviation='isf',
       short_desc=N_("characters included in file names and pathnames"),
       type='string', list='comma', scope={'global'},
