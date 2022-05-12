@@ -2875,10 +2875,6 @@ int do_ecmd(int fnum, char *ffname, char *sfname, exarg_T *eap, linenr_T newlnum
     redraw_curbuf_later(NOT_VALID);     // redraw this buffer later
   }
 
-  if (p_im && (State & MODE_INSERT) == 0) {
-    need_start_insertmode = true;
-  }
-
   // Change directories when the 'acd' option is set.
   do_autochdir();
 
@@ -4905,9 +4901,8 @@ void ex_help(exarg_T *eap)
     }
   }
 
-  if (!p_im) {
-    restart_edit = 0;               // don't want insert mode in help file
-  }
+  restart_edit = 0;               // don't want insert mode in help file
+
   // Restore KeyTyped, setting 'filetype=help' may reset it.
   // It is needed for do_tag top open folds under the cursor.
   KeyTyped = old_KeyTyped;

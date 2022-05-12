@@ -1395,9 +1395,6 @@ static int command_line_execute(VimState *state, int key)
       redrawcmd();
       return command_line_not_changed(s);
     } else {
-      if (s->c == Ctrl_G && p_im && restart_edit == 0) {
-        restart_edit = 'a';
-      }
       s->gotesc = true;        // will free ccline.cmdbuff after putting it
                                // in history
       return 0;                // back to Normal mode
