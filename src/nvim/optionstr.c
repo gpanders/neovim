@@ -31,6 +31,7 @@
 #include "nvim/memline.h"
 #include "nvim/memory.h"
 #include "nvim/message.h"
+#include "nvim/mouse.h"
 #include "nvim/move.h"
 #include "nvim/option.h"
 #include "nvim/option_defs.h"
@@ -1810,6 +1811,13 @@ int expand_set_mousescroll(optexpand_T *args, int *numMatches, char ***matches)
                                ARRAY_SIZE(opt_mousescroll_values) - 1,
                                numMatches,
                                matches);
+}
+
+const char *did_set_mouseshape(optset_T *args)
+{
+  const char *errmsg = parse_shape_opt(SHAPE_MOUSE);
+  update_mouseshape(-1);
+  return errmsg;
 }
 
 /// The 'nrformats' option is changed.

@@ -9,6 +9,7 @@
 #include "nvim/buffer_defs.h"
 #include "nvim/charset.h"
 #include "nvim/cursor.h"
+#include "nvim/cursor_shape.h"
 #include "nvim/drawscreen.h"
 #include "nvim/edit.h"
 #include "nvim/eval.h"
@@ -55,6 +56,8 @@
 
 static linenr_T orig_topline = 0;
 static int orig_topfill = 0;
+
+static int current_mouse_shape = 0;
 
 /// Get class of a character for selection: same class means same word.
 /// 0: blank
@@ -1946,4 +1949,52 @@ void f_getmousepos(typval_T *argvars, typval_T *rettv, EvalFuncData fptr)
   tv_dict_add_nr(d, S_LEN("line"), (varnumber_T)lnum);
   tv_dict_add_nr(d, S_LEN("column"), column);
   tv_dict_add_nr(d, S_LEN("coladd"), coladd);
+}
+
+/*
+ * Set the mouse shape:
+ * If "shape" is -1, use shape depending on the current mode,
+ * depending on the current state.
+ * If "shape" is -2, only update the shape when it's CLINE or STATUS (used
+ * when the mouse moves off the status or command line).
+ */
+void update_mouseshape(int shape_idx)
+{
+    int new_mouse_shape;
+
+    // Postpone the updating when more is to come.  Speeds up executing of
+    // mappings.
+    if (shape_idx == -1 && char_avail())
+    {
+      postponed_mouseshape = true;
+      return;
+    }
+
+    // When ignoring the mouse don't change shape on the statusline.
+    if (*p_mouse == NUL
+      && (shape_idx == SHAPE_IDX_CLINE
+        || shape_idx == SHAPE_IDX_STATUS
+        || shape_idx == SHAPE_IDX_VSEP)) {
+      shape_idx = -2;
+    }
+
+    if (shape_idx == -2
+      && current_mouse_shape != shape_table[SHAPE_IDX_CLINE].mshape
+      && current_mouse_shape != shape_table[SHAPE_IDX_STATUS].mshape
+      && current_mouse_shape != shape_table[SHAPE_IDX_VSEP].mshape) {
+      return;
+    }
+
+    if (shape_idx < 0) {
+      new_mouse_shape = shape_table[cursor_get_mode_idx(true)].mshape;
+    } else {
+      new_mouse_shape = shape_table[shape_idx].mshape;
+    }
+
+    if (new_mouse_shape != current_mouse_shape) {
+      //mch_set_mouse_shape(new_mouse_shape);
+      current_mouse_shape = new_mouse_shape;
+    }
+
+    postponed_mouseshape = false;
 }

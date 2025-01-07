@@ -629,7 +629,7 @@ void ui_cursor_shape_no_check_conceal(void)
   if (!full_screen) {
     return;
   }
-  int new_mode_idx = cursor_get_mode_idx();
+  int new_mode_idx = cursor_get_mode_idx(false);
 
   if (new_mode_idx != ui_mode_idx) {
     ui_mode_idx = new_mode_idx;

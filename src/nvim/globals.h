@@ -350,6 +350,11 @@ EXTERN bool mouse_past_eol INIT( = false);     // mouse right of line
 EXTERN int mouse_dragging INIT( = 0);          // extending Visual area with
                                                // mouse dragging
 
+EXTERN bool drag_status_line INIT(= false);     // dragging the status line
+EXTERN bool postponed_mouseshape INIT(= false); // postponed updating the
+                                                // mouse pointer shape
+EXTERN bool drag_sep_line INIT(= false);        // dragging vert separator
+
 // The root of the menu hierarchy.
 EXTERN vimmenu_T *root_menu INIT( = NULL);
 // While defining the system menu, sys_menu is true.  This avoids

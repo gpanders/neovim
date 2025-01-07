@@ -5847,14 +5847,14 @@ return {
     },
     {
       abbreviation = 'mouses',
+      cb = 'did_set_mouseshape',
       deny_duplicates = true,
       defaults = {
         if_true = '',
-        doc = [["i:beam,r:beam,s:updown,sd:cross,
-            m:no,ml:up-arrow,v:rightup-arrow"]],
+        doc = [["v:text,s:ns-cursor,vs:ew-cursor"]],
       },
       desc = [=[
-        This option tells Vim what the mouse pointer should look like in
+        This option tells Nvim what the mouse pointer should look like in
         different modes.  The option is a comma-separated list of parts, much
         like used for 'guicursor'.  Each part consist of a mode/location-list
         and an argument-list:
@@ -5882,36 +5882,46 @@ return {
         	vd	any mode, while dragging a vertical separator line
         	a	everywhere
 
-        The shape is one of the following:
-        avail	name		looks like ~
-        w x	arrow		Normal mouse pointer
-        w x	blank		no pointer at all (use with care!)
-        w x	beam		I-beam
-        w x	updown		up-down sizing arrows
-        w x	leftright	left-right sizing arrows
-        w x	busy		The system's usual busy pointer
-        w x	no		The system's usual "no input" pointer
-          x	udsizing	indicates up-down resizing
-          x	lrsizing	indicates left-right resizing
-          x	crosshair	like a big thin +
-          x	hand1		black hand
-          x	hand2		white hand
-          x	pencil		what you write with
-          x	question	big ?
-          x	rightup-arrow	arrow pointing right-up
-        w x	up-arrow	arrow pointing up
-          x	<number>	any X11 pointer number (see X11/cursorfont.h)
+        The shape name is arbitrary and interpreted by any attached UIs. Shapes
+        understood by the |TUI| are listed below:
+        	alias
+        	cell
+        	copy
+        	crosshair
+        	default
+        	e-resize
+        	ew-resize
+        	grab
+        	grabbing
+        	help
+        	move
+        	n-resize
+        	ne-resize
+        	nesw-resize
+        	no-drop
+        	not-allowed
+        	ns-resize
+        	nw-resize
+        	nwse-resize
+        	pointer
+        	progress
+        	s-resize
+        	se-resize
+        	sw-resize
+        	text
+        	vertical-text
+        	w-resize
+        	wait
+        	zoom-in
+        	zoom-out
 
-        The "avail" column contains a 'w' if the shape is available for Win32,
-        x for X11.
-        Any modes not specified or shapes not available use the normal mouse
-        pointer.
+        Not all shapes are supported in all UIs.
 
         Example: >vim
-        	set mouseshape=s:udsizing,m:no
-        <	will make the mouse turn to a sizing arrow over the status lines and
-        indicate no input when the hit-enter prompt is displayed (since
-        clicking the mouse has no effect in this state.)
+        	set mouseshape=s:ns-resize,vs:ew-resize
+        <
+        will make the mouse turn to a resizing arrow over status lines and
+        vertical separators.
       ]=],
       full_name = 'mouseshape',
       list = 'onecomma',
@@ -5919,7 +5929,7 @@ return {
       short_desc = N_('shape of the mouse pointer in different modes'),
       tags = { 'E547' },
       type = 'string',
-      immutable = true,
+      varname = 'p_mouseshape',
     },
     {
       abbreviation = 'mouset',

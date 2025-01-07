@@ -62,7 +62,7 @@ Array mode_style_array(Arena *arena)
     PUT_C(dic, "name", CSTR_AS_OBJ(cur->full_name));
     PUT_C(dic, "short_name", CSTR_AS_OBJ(cur->name));
     if (cur->used_for & SHAPE_MOUSE) {
-      PUT_C(dic, "mouse_shape", INTEGER_OBJ(cur->mshape));
+      PUT_C(dic, "mouse_shape", CSTR_AS_OBJ(cur->mshape));
     }
     if (cur->used_for & SHAPE_CURSOR) {
       String shape_str;
@@ -112,7 +112,7 @@ const char *parse_shape_opt(int what)
     if (round == 2 || *p_guicursor == NUL) {
       // Set all entries to default (block, blinkon0, default color).
       // This is the default for anything that is not set.
-      clear_shape_table();
+      clear_shape_table(what);
       if (*p_guicursor == NUL) {
         ui_mode_info_set();
         return NULL;
@@ -317,49 +317,85 @@ bool cursor_mode_uses_syn_id(int syn_id)
 }
 
 /// Return the index into shape_table[] for the current mode.
-int cursor_get_mode_idx(void)
+int cursor_get_mode_idx(bool mouse)
   FUNC_ATTR_PURE
 {
+  if (mouse && (State == MODE_HITRETURN || State == MODE_ASKMORE)) {
+    return SHAPE_IDX_MORE;
+  }
+
+  if (mouse && drag_status_line) {
+    return SHAPE_IDX_SDRAG;
+  }
+
+  if (mouse && drag_sep_line) {
+    return SHAPE_IDX_VDRAG;
+  }
+
   if (State == MODE_SHOWMATCH) {
     return SHAPE_IDX_SM;
-  } else if (State == MODE_TERMINAL) {
+  }
+
+  if (State == MODE_TERMINAL) {
     return SHAPE_IDX_TERM;
-  } else if (State & VREPLACE_FLAG) {
+  }
+
+  if (State & VREPLACE_FLAG) {
     return SHAPE_IDX_R;
-  } else if (State & REPLACE_FLAG) {
+  }
+
+  if (State & REPLACE_FLAG) {
     return SHAPE_IDX_R;
-  } else if (State & MODE_INSERT) {
+  }
+
+  if (State & MODE_INSERT) {
     return SHAPE_IDX_I;
-  } else if (State & MODE_CMDLINE) {
+  }
+
+  if (State & MODE_CMDLINE) {
     if (cmdline_at_end()) {
       return SHAPE_IDX_C;
-    } else if (cmdline_overstrike()) {
-      return SHAPE_IDX_CR;
-    } else {
-      return SHAPE_IDX_CI;
     }
-  } else if (finish_op) {
+
+    if (cmdline_overstrike()) {
+      return SHAPE_IDX_CR;
+    }
+
+    return SHAPE_IDX_CI;
+  }
+
+  if (finish_op) {
     return SHAPE_IDX_O;
-  } else if (VIsual_active) {
+  }
+
+  if (VIsual_active) {
     if (*p_sel == 'e') {
       return SHAPE_IDX_VE;
-    } else {
-      return SHAPE_IDX_V;
     }
-  } else {
-    return SHAPE_IDX_N;
+
+    return SHAPE_IDX_V;
   }
+
+  return SHAPE_IDX_N;
 }
 
 /// Clears all entries in shape_table to block, blinkon0, and default color.
-static void clear_shape_table(void)
+static void clear_shape_table(int what)
 {
   for (int idx = 0; idx < SHAPE_IDX_COUNT; idx++) {
+    if ((shape_table[idx].used_for & what) == 0) {
+      continue;
+    }
+
     shape_table[idx].shape = SHAPE_BLOCK;
     shape_table[idx].blinkwait = 0;
     shape_table[idx].blinkon = 0;
     shape_table[idx].blinkoff = 0;
     shape_table[idx].id = 0;
     shape_table[idx].id_lm = 0;
+
+    if (shape_table[idx].mshape != NULL) {
+      XFREE_CLEAR(shape_table[idx].mshape);
+    }
   }
 }

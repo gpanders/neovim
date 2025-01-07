@@ -463,6 +463,7 @@ EXTERN int p_mh;                ///< 'mousehide'
 EXTERN char *p_mousescroll;     ///< 'mousescroll'
 EXTERN OptInt p_mousescroll_vert INIT( = MOUSESCROLL_VERT_DFLT);
 EXTERN OptInt p_mousescroll_hor INIT( = MOUSESCROLL_HOR_DFLT);
+EXTERN char *p_mouseshape;      ///< 'mouseshape'
 EXTERN OptInt p_mouset;         ///< 'mousetime'
 EXTERN int p_more;              ///< 'more'
 EXTERN char *p_nf;              ///< 'nrformats'
